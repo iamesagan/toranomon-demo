@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toranomon Clinic — Japan AI Solutions</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0f1a;--bg2:#111827;--bg3:#1a2234;--bg4:#1e2a40;
+  --border:#2a3a55;--border2:#3a4f70;
+  --text:#e8edf5;--text2:#8fa3c0;--text3:#5a7090;
+  --teal:#00c9a7;--teal2:#00a88a;--teal3:#004d3f;--teal4:#002e25;
+  --blue:#3b82f6;--blue2:#1d4ed8;
+  --amber:#f59e0b;--red:#ef4444;--green:#10b981;
+  --purple:#8b5cf6;--pink:#ec4899;
+  --r:10px;--r2:14px;
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:14px;min-height:100vh}
+.shell{display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:220px;min-width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column}
+.logo-area{padding:16px;border-bottom:1px solid var(--border)}
+.logo-mark{display:flex;align-items:center;gap:10px}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--teal),var(--blue));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.logo-text{font-size:13px;font-weight:600;color:var(--text);line-height:1.2}
+.logo-sub{font-size:10px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase}
+.clinic-chip{margin:10px 0 0;padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);font-size:11px}
+.clinic-chip .cn{font-weight:600;color:var(--teal);font-size:12px}
+.chip-status{display:flex;align-items:center;gap:5px;margin-top:5px;font-size:10px;color:var(--green)}
+.pulse-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
+
+.nav{flex:1;padding:10px 8px;overflow-y:auto}
+.nav-sect{font-size:10px;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;padding:8px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:13px;transition:.15s;margin-bottom:2px;border:1px solid transparent}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:var(--teal4);color:var(--teal);border-color:var(--teal3)}
+.nav-icon{width:15px;height:15px;flex-shrink:0;opacity:.85}
+.nbadge{margin-left:auto;font-size:10px;border-radius:20px;padding:1px 6px;font-weight:600}
+.nbadge.red{background:var(--red);color:#fff}
+.nbadge.green{background:#052e16;color:var(--green)}
+.nbadge.teal{background:var(--teal);color:#fff}
+
+.sfooter{padding:12px;border-top:1px solid var(--border)}
+.ai-live{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--teal4);border:1px solid var(--teal3);border-radius:8px;font-size:12px;color:var(--teal)}
+.live-pulse{width:7px;height:7px;background:var(--teal);border-radius:50%;animation:pulse 1.8s infinite;flex-shrink:0}
+.sfooter-sub{display:flex;justify-content:space-between;margin-top:7px;font-size:11px;color:var(--text3)}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:54px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0}
+.page-title{font-size:15px;font-weight:600;flex:1}
+.page-sub{font-size:11px;color:var(--text3)}
+.tbar-actions{display:flex;align-items:center;gap:8px}
+.btn{padding:6px 13px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border2);background:var(--bg3);color:var(--text);transition:.15s}
+.btn:hover{background:var(--bg4)}
+.btn.primary{background:var(--teal);border-color:var(--teal);color:#fff}
+.btn.primary:hover{background:var(--teal2)}
+.btn.sm{font-size:11px;padding:4px 10px}
+.lang-sel{padding:5px 8px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:12px;cursor:pointer;outline:none}
+
+.content{flex:1;overflow-y:auto;padding:18px 20px}
+.tab{display:none}
+.tab.active{display:block}
+
+/* Alerts */
+.alert{display:flex;align-items:flex-start;gap:9px;padding:10px 13px;border-radius:8px;font-size:12px;margin-bottom:16px}
+.alert.success{background:#052e16;border:1px solid #0a4a26;color:var(--green)}
+.alert.info{background:#0c1f3d;border:1px solid #1a3a6e;color:#6fb3f7}
+.alert.warn{background:#2d1f00;border:1px solid #5a3d00;color:var(--amber)}
+
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px}
+.stat-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.stat-val{font-size:26px;font-weight:700;line-height:1.1}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.stat-delta{display:inline-block;padding:2px 7px;border-radius:20px;font-size:11px;margin-top:4px}
+.delta-up{background:#052e16;color:var(--green)}
+.delta-dn{background:#2d1010;color:var(--red)}
+
+/* Grid */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+
+/* Cards */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:15px}
+.card+.card{margin-top:14px}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.card-title{font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.card-action{font-size:11px;color:var(--teal);cursor:pointer}
+
+/* Appointment rows */
+.appt{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:.15s}
+.appt:last-child{border-bottom:0}
+.appt:hover{background:var(--bg3);margin:0 -8px;padding:8px 8px;border-radius:6px}
+.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.appt-info{flex:1;min-width:0}
+.appt-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appt-meta{font-size:11px;color:var(--text3);margin-top:1px}
+.appt-time{font-size:12px;color:var(--text2);text-align:right;flex-shrink:0}
+.badge{display:inline-block;font-size:10px;padding:1px 7px;border-radius:20px;margin-top:2px}
+.b-new{background:#1e3a5f;color:var(--blue)}
+.b-ret{background:#1a2e1a;color:var(--green)}
+.b-priv{background:#2d1f00;color:var(--amber)}
+.b-wait{background:#2a1a2e;color:var(--purple)}
+
+/* Calendar */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:8px}
+.cal-head{font-size:10px;color:var(--text3);text-align:center;padding:3px 0;text-transform:uppercase}
+.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:12px;border-radius:5px;cursor:pointer;transition:.15s;position:relative}
+.cal-day:hover{background:var(--bg4)}
+.cal-day.today{background:var(--teal);color:#fff;font-weight:600}
+.cal-day.has::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:var(--amber);border-radius:50%}
+.cal-day.full::after{background:var(--red)}
+.cal-day.closed{color:var(--border2);cursor:default}
+.cal-legend{display:flex;gap:12px;margin-top:8px;font-size:10px;color:var(--text3)}
+
+/* Metrics */
+.metric{margin-bottom:9px}
+.metric-lbl{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px}
+.metric-track{height:5px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.metric-fill{height:100%;border-radius:3px;transition:.8s}
+
+/* Caller card */
+.caller-card{background:var(--bg3);border:1px solid var(--teal3);border-radius:var(--r2);padding:14px;margin-bottom:12px}
+.caller-hdr{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.caller-av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--blue));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;flex-shrink:0}
+.caller-live{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--teal);margin-left:auto}
+.live-dot{width:6px;height:6px;background:var(--teal);border-radius:50%;animation:pulse 1.5s infinite}
+.irow{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border)}
+.irow:last-child{border:0}
+.il{color:var(--text3)}
+.iv{color:var(--text);font-weight:500;text-align:right;max-width:180px}
+
+/* Chat */
+.chat-area{height:190px;overflow-y:auto;padding:6px 0;display:flex;flex-direction:column;gap:8px}
+.cmsg{max-width:84%;padding:9px 12px;border-radius:12px;font-size:12px;line-height:1.55}
+.cmsg.ai{background:var(--bg3);border:1px solid var(--border);align-self:flex-start;border-radius:4px 12px 12px 12px}
+.cmsg.user{background:var(--teal4);border:1px solid var(--teal3);color:var(--teal);align-self:flex-end;border-radius:12px 4px 12px 12px}
+.cmsg-lang{font-size:10px;color:var(--text3);margin-bottom:2px}
+.chat-row{display:flex;gap:8px;margin-top:8px}
+.chat-row input{flex:1;padding:7px 11px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;outline:none}
+.chat-row input:focus{border-color:var(--teal)}
+.chat-row button{padding:7px 13px;background:var(--teal);border:0;border-radius:8px;color:#fff;font-size:12px;cursor:pointer}
+.quick-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.quick-btns button{font-size:10px;padding:4px 9px;border-radius:7px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;transition:.15s}
+.quick-btns button:hover{background:var(--bg4);color:var(--text)}
+.typing{display:flex;gap:4px;align-items:center;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:4px 12px 12px 12px;width:fit-content}
+.typing span{width:5px;height:5px;background:var(--text3);border-radius:50%;animation:bounce .9s infinite}
+.typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+
+/* Schedule table */
+.sched-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.sched-tbl th{text-align:center;padding:8px 4px;color:var(--text3);font-weight:500;border-bottom:1px solid var(--border)}
+.sched-tbl td{text-align:center;padding:7px 4px;border-bottom:1px solid var(--border)}
+.sched-tbl tr:last-child td{border:0}
+.sopen{color:var(--teal);font-size:16px}
+.spartial{color:var(--amber);font-size:14px}
+.sclosed{color:var(--border2);font-size:16px}
+
+/* Reviews */
+.stars{color:var(--amber);letter-spacing:1px}
+.review{padding:10px 0;border-bottom:1px solid var(--border)}
+.review:last-child{border:0}
+.review-hdr{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.rav{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.review-date{font-size:11px;color:var(--text3);margin-left:auto}
+.review-txt{font-size:12px;color:var(--text2);line-height:1.5}
+.review-foot{font-size:10px;color:var(--text3);margin-top:3px}
+
+/* Lang tags */
+.tag{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;margin-right:3px}
+.t-en{background:#0c1f3d;color:#6fb3f7}
+.t-ja{background:#1a1a3a;color:#a78bfa}
+.t-zh{background:#0d2d1a;color:#6ee7b7}
+.t-ko{background:#2d1a10;color:#fca5a5}
+
+/* Source cells */
+.src-cell{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:12px;text-align:center}
+.src-val{font-size:22px;font-weight:700}
+.src-lbl{font-size:11px;color:var(--text3);margin-top:3px}
+
+/* Info rows */
+.info-table{font-size:12px;line-height:2;color:var(--text2);width:100%}
+.info-table td{padding:4px 0;border-bottom:1px solid var(--border)}
+.info-table tr:last-child td{border:0}
+.info-table td:first-child{color:var(--text3);width:45%}
+.info-table td:last-child{color:var(--text);font-weight:500}
+
+/* Avail items */
+.avail-item{display:flex;justify-content:space-between;font-size:12px;padding:6px 8px;background:var(--bg3);border-radius:6px;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ═══ SIDEBAR ═══ -->
+<div class="sidebar">
+  <div class="logo-area">
+    <div class="logo-mark">
+      <div class="logo-icon">JA</div>
+      <div>
+        <div class="logo-text">Japan AI Solutions</div>
+        <div class="logo-sub">Clinic AI Platform</div>
+      </div>
+    </div>
+    <div class="clinic-chip">
+      <div class="cn">虎ノ門クリニック</div>
+      <div style="color:var(--text3);font-size:10px;margin-top:1px">Toranomon Clinic · Minato-ku, Tokyo</div>
+      <div class="chip-status"><span class="pulse-dot"></span>All AI modules active</div>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-sect">Overview</div>
+    <div class="nav-item active" onclick="showTab('dashboard')">
+      <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-sect">Patient Care</div>
+    <div class="nav-item" onclick="showTab('booking')">
+      <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Booking
+      <span class="nbadge red">7</span>
+    </div>
+    <div class="nav-item" onclick="showTab('caller')">
+      <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.12 2.18 2 2 0 012.11 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l.46-.46a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      Caller ID
+      <span class="nbadge teal">Live</span>
+    </div>
+    <div class="nav-item" onclick="showTab('concierge')">
+      <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      AI Concierge
+    </div>
+    <div class="nav-sect">Operations</div>
+    <div class="nav-item" onclick="showTab('schedule')">
+      <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Schedule
+    </div>
+    <div class="nav-item" onclick="showTab('reviews')">
+      <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Reviews
+      <span class="nbadge green">4.8</span>
+    </div>
+    <div class="nav-item" onclick="showTab('info')">
+      <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      Clinic Info
+    </div>
+  </nav>
+
+  <div class="sfooter">
+    <div class="ai-live"><span class="live-pulse"></span>AI Concierge — 24/7 active</div>
+    <div class="sfooter-sub">
+      <span>03-6826-231x</span>
+      <span style="color:var(--teal)">LINE · Phone · Web</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <div class="topbar">
+    <div style="flex:1">
+      <div class="page-title" id="page-title">Dashboard</div>
+      <div class="page-sub" id="page-sub">Wednesday, 4 June 2026 · 09:41 JST</div>
+    </div>
+    <div class="tbar-actions">
+      <select class="lang-sel" id="lang-sel">
+        <option value="en">🇬🇧 EN</option>
+        <option value="ja">🇯🇵 JA</option>
+        <option value="zh">🇨🇳 ZH</option>
+        <option value="ko">🇰🇷 KO</option>
+      </select>
+      <button class="btn">Export</button>
+      <button class="btn primary">+ New Appt</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ──── DASHBOARD ──── -->
+    <div class="tab active" id="tab-dashboard">
+      <div class="alert success">✓ &nbsp;AI answered 14 overnight calls — 3 bookings confirmed, 2 routed to LINE follow-up, 0 escalations.</div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-lbl">Today's Patients</div><div class="stat-val" style="color:var(--teal)">18</div><div class="stat-delta delta-up">↑ +3 vs yesterday</div></div>
+        <div class="stat-card"><div class="stat-lbl">Pending Bookings</div><div class="stat-val" style="color:var(--amber)">7</div><div class="stat-sub">Awaiting confirmation</div></div>
+        <div class="stat-card"><div class="stat-lbl">AI Calls This Month</div><div class="stat-val" style="color:var(--purple)">142</div><div class="stat-delta delta-up">↑ 18% vs May</div></div>
+        <div class="stat-card"><div class="stat-lbl">Patient Rating</div><div class="stat-val" style="color:var(--amber)">4.8</div><div class="stat-sub">★ 247 reviews</div></div>
+      </div>
+
+      <div class="g2">
+        <div class="card">
+          <div class="card-hdr">
+            <div class="card-title"><span class="dot" style="background:var(--teal)"></span>Today's Appointments</div>
+            <span class="card-action" onclick="showTab('booking')">View all →</span>
+          </div>
+          <div id="today-appts"></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr">
+            <div class="card-title"><span class="dot" style="background:var(--blue)"></span>June 2026</div>
+            <span class="card-action" onclick="showTab('schedule')">Schedule →</span>
+          </div>
+          <div class="cal-grid">
+            <div class="cal-head">Mon</div><div class="cal-head">Tue</div><div class="cal-head">Wed</div>
+            <div class="cal-head">Thu</div><div class="cal-head">Fri</div>
+            <div class="cal-head" style="color:var(--red)">Sat</div><div class="cal-head" style="color:var(--red)">Sun</div>
+            <div class="cal-day" style="opacity:0"></div>
+            <div class="cal-day has">3</div><div class="cal-day today">4</div><div class="cal-day has">5</div><div class="cal-day has">6</div>
+            <div class="cal-day closed">7</div><div class="cal-day closed">8</div>
+            <div class="cal-day has">9</div><div class="cal-day full">10</div><div class="cal-day has">11</div><div class="cal-day has">12</div><div class="cal-day has">13</div>
+            <div class="cal-day closed">14</div><div class="cal-day closed">15</div>
+            <div class="cal-day has">16</div><div class="cal-day has">17</div><div class="cal-day has">18</div><div class="cal-day full">19</div><div class="cal-day has">20</div>
+            <div class="cal-day closed">21</div><div class="cal-day closed">22</div>
+            <div class="cal-day has">23</div><div class="cal-day has">24</div><div class="cal-day has">25</div><div class="cal-day has">26</div><div class="cal-day has">27</div>
+            <div class="cal-day closed">28</div><div class="cal-day closed">29</div>
+            <div class="cal-day has">30</div>
+          </div>
+          <div class="cal-legend">
+            <span><span style="color:var(--amber)">●</span> Appointments</span>
+            <span><span style="color:var(--red)">●</span> Fully booked</span>
+            <span><span style="color:var(--border2)">●</span> Closed</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="g2">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--purple)"></span>AI Channel Performance</div></div>
+          <div class="metric"><div class="metric-lbl"><span>Phone AI (Vapi + Azure Nanami)</span><span style="color:var(--teal)">94%</span></div><div class="metric-track"><div class="metric-fill" style="width:94%;background:var(--teal)"></div></div></div>
+          <div class="metric"><div class="metric-lbl"><span>LINE / Liny Automation</span><span style="color:var(--blue)">87%</span></div><div class="metric-track"><div class="metric-fill" style="width:87%;background:var(--blue)"></div></div></div>
+          <div class="metric"><div class="metric-lbl"><span>Web Booking Completion</span><span style="color:var(--amber)">79%</span></div><div class="metric-track"><div class="metric-fill" style="width:79%;background:var(--amber)"></div></div></div>
+          <div class="metric"><div class="metric-lbl"><span>Multilingual Accuracy (DeepL)</span><span style="color:var(--green)">98%</span></div><div class="metric-track"><div class="metric-fill" style="width:98%;background:var(--green)"></div></div></div>
+          <div class="metric"><div class="metric-lbl"><span>Caller Recognition Match</span><span style="color:var(--purple)">91%</span></div><div class="metric-track"><div class="metric-fill" style="width:91%;background:var(--purple)"></div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--amber)"></span>Language Distribution</div></div>
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <div style="display:flex;align-items:center;gap:9px"><span style="font-size:18px">🇯🇵</span><div style="flex:1"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>Japanese</span><span>62%</span></div><div class="metric-track"><div class="metric-fill" style="width:62%;background:#a78bfa"></div></div></div></div>
+            <div style="display:flex;align-items:center;gap:9px"><span style="font-size:18px">🇬🇧</span><div style="flex:1"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>English</span><span>21%</span></div><div class="metric-track"><div class="metric-fill" style="width:21%;background:var(--blue)"></div></div></div></div>
+            <div style="display:flex;align-items:center;gap:9px"><span style="font-size:18px">🇨🇳</span><div style="flex:1"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>Chinese</span><span>11%</span></div><div class="metric-track"><div class="metric-fill" style="width:11%;background:var(--red)"></div></div></div></div>
+            <div style="display:flex;align-items:center;gap:9px"><span style="font-size:18px">🇰🇷</span><div style="flex:1"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>Korean</span><span>6%</span></div><div class="metric-track"><div class="metric-fill" style="width:6%;background:var(--pink)"></div></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──── BOOKING ──── -->
+    <div class="tab" id="tab-booking">
+      <div class="alert info">ℹ &nbsp;7 pending bookings require confirmation. AI intake forms collected for all new patients.</div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-hdr">
+          <div class="card-title"><span class="dot" style="background:var(--amber)"></span>Pending Confirmations</div>
+          <button class="btn primary sm" onclick="confirmAll()">Confirm All</button>
+        </div>
+        <div id="booking-list"></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--teal)"></span>Booking Sources — This Week</div></div>
+        <div class="g4">
+          <div class="src-cell"><div class="src-val" style="color:var(--teal)">24</div><div class="src-lbl">Phone AI</div></div>
+          <div class="src-cell"><div class="src-val" style="color:var(--green)">18</div><div class="src-lbl">LINE / Liny</div></div>
+          <div class="src-cell"><div class="src-val" style="color:var(--blue)">11</div><div class="src-lbl">Web Form</div></div>
+          <div class="src-cell"><div class="src-val" style="color:var(--amber)">5</div><div class="src-lbl">Direct</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──── CALLER ID ──── -->
+    <div class="tab" id="tab-caller">
+      <div class="alert warn">📞 &nbsp;Active call in progress — number matched to patient record. Duration: 01:24</div>
+      <div class="g3">
+        <div>
+          <div class="caller-card">
+            <div class="caller-hdr">
+              <div class="caller-av">TK</div>
+              <div>
+                <div style="font-size:14px;font-weight:600">田中 健一 (Tanaka Kenichi)</div>
+                <div style="font-size:11px;color:var(--text3)">Patient #00342 · Returning patient</div>
+              </div>
+              <div class="caller-live"><span class="live-dot"></span>Live call</div>
+            </div>
+            <div class="irow"><span class="il">Phone</span><span class="iv" style="color:var(--teal)">03-XXXX-XXXX ✓ Matched</span></div>
+            <div class="irow"><span class="il">Last visit</span><span class="iv">May 14, 2026 · 内科</span></div>
+            <div class="irow"><span class="il">Today's appt</span><span class="iv">09:00 ✓ Confirmed</span></div>
+            <div class="irow"><span class="il">Consultation type</span><span class="iv">自由診療 (Private)</span></div>
+            <div class="irow"><span class="il">Language</span><span class="iv">🇯🇵 Japanese</span></div>
+            <div class="irow"><span class="il">Allergies</span><span class="iv" style="color:var(--red)">Penicillin ⚠ Flagged</span></div>
+            <div class="irow"><span class="il">Payment</span><span class="iv">Self-pay (私費)</span></div>
+            <div style="display:flex;gap:8px;margin-top:11px">
+              <button class="btn primary" style="flex:1;font-size:11px">Open Full Record</button>
+              <button class="btn sm">Add Note</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--blue)"></span>AI Call Summary (live transcript)</div></div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.7;background:var(--bg3);border-radius:8px;padding:10px">
+              Patient calling to confirm today's 09:00 appointment and enquire about blood pressure prescription refill (血圧薬). AI recognised caller, confirmed appointment in Japanese, and logged refill request to GoHighLevel CRM. Allergy flag surfaced automatically. No staff escalation required.
+            </div>
+            <div style="margin-top:8px;font-size:11px;color:var(--text3)">
+              <span class="tag t-ja">ja</span> Deepgram Nova 3 · Azure NanamiNeural · Vapi · Make.com
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:12px">
+            <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--green)"></span>Recognition Confidence</div></div>
+            <div class="metric"><div class="metric-lbl"><span>Phone number match</span><span style="color:var(--green)">97%</span></div><div class="metric-track"><div class="metric-fill" style="width:97%;background:var(--green)"></div></div></div>
+            <div class="metric"><div class="metric-lbl"><span>Voice ID certainty</span><span style="color:var(--teal)">89%</span></div><div class="metric-track"><div class="metric-fill" style="width:89%;background:var(--teal)"></div></div></div>
+            <div style="font-size:11px;color:var(--text3);margin-top:8px">Lookup: Phone → Patient DB → GoHighLevel CRM</div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--amber)"></span>Today's Call Log</div></div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 8px;background:var(--bg3);border-radius:6px"><span>山本 由美</span><span style="color:var(--green)">✓ Booking confirmed</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 8px;background:var(--bg3);border-radius:6px"><span>Unknown caller</span><span style="color:var(--blue)">→ New patient intake</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 8px;background:var(--bg3);border-radius:6px"><span>Sarah Williams</span><span style="color:var(--amber)">EN · Directions sent</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 8px;background:var(--bg3);border-radius:6px"><span>李 偉</span><span style="color:var(--purple)">ZH · Reschedule done</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 8px;background:var(--bg3);border-radius:6px"><span>김지수</span><span style="color:var(--pink)">KO · Enquiry handled</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──── AI CONCIERGE ──── -->
+    <div class="tab" id="tab-concierge">
+      <div class="g2">
+        <div class="card">
+          <div class="card-hdr">
+            <div class="card-title"><span class="dot" style="background:var(--teal)"></span>AI Concierge — Live Demo</div>
+            <div><span class="tag t-en">EN</span><span class="tag t-ja">JA</span><span class="tag t-zh">ZH</span><span class="tag t-ko">KO</span></div>
+          </div>
+          <div class="chat-area" id="chat-area">
+            <div class="cmsg ai"><div class="cmsg-lang">AI Concierge · Japanese</div>いつも虎ノ門クリニックをご利用いただきありがとうございます。ご予約・お問い合わせはお気軽にどうぞ。</div>
+            <div class="cmsg ai"><div class="cmsg-lang">AI Concierge · English</div>Welcome to Toranomon Clinic. I can assist with appointments, clinic hours, directions, and health enquiries in Japanese, English, Chinese, or Korean. How can I help you today?</div>
+          </div>
+          <div class="chat-row">
+            <input type="text" id="chat-input" placeholder="Type in any language... / 日本語でどうぞ" onkeydown="if(event.key==='Enter')sendChat()">
+            <button onclick="sendChat()">Send</button>
+          </div>
+          <div class="quick-btns">
+            <button onclick="quickMsg('What are your opening hours?')">Opening hours?</button>
+            <button onclick="quickMsg('予約をお願いします')">予約をお願いします</button>
+            <button onclick="quickMsg('我想预约就诊')">我想预约就诊</button>
+            <button onclick="quickMsg('Do you accept private insurance?')">Private insurance?</button>
+            <button onclick="quickMsg('アクセス方法を教えてください')">アクセス方法は？</button>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:12px">
+            <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--purple)"></span>Concierge Capabilities</div></div>
+            <div style="display:flex;flex-direction:column;gap:7px;font-size:12px">
+              <div style="display:flex;gap:8px"><span style="color:var(--green)">✓</span><span>24/7 phone AI — Vapi + Azure NanamiNeural</span></div>
+              <div style="display:flex;gap:8px"><span style="color:var(--green)">✓</span><span>Booking, cancellation & rescheduling</span></div>
+              <div style="display:flex;gap:8px"><span style="color:var(--green)">✓</span><span>Caller ID + patient record lookup</span></div>
+              <div style="display:flex;gap:8px"><span style="color:var(--green)">✓</span><span>4-language support: JA / EN / ZH / KO</span></div>
+              <div style="display:flex;gap:8px"><span style="color:var(--green)">✓</span><span>LINE / Liny automated follow-up</span></div>
+              <div style="display:flex;gap:8px"><span style="color:var(--green)">✓</span><span>Clinic info, directions, hours</span></div>
+              <div style="display:flex;gap:8px"><span style="color:var(--green)">✓</span><span>Prescription refill requests</span></div>
+              <div style="display:flex;gap:8px"><span style="color:var(--green)">✓</span><span>Smart escalation to clinic staff</span></div>
+              <div style="display:flex;gap:8px"><span style="color:var(--green)">✓</span><span>APPI-compliant data handling</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--amber)"></span>Overnight Activity (00:00–09:00)</div></div>
+            <div style="font-size:12px;line-height:2;color:var(--text2)">
+              <div style="display:flex;justify-content:space-between"><span>Calls handled</span><span style="color:var(--teal)">14</span></div>
+              <div style="display:flex;justify-content:space-between"><span>Bookings auto-confirmed</span><span style="color:var(--green)">3</span></div>
+              <div style="display:flex;justify-content:space-between"><span>LINE messages sent</span><span style="color:var(--blue)">8</span></div>
+              <div style="display:flex;justify-content:space-between"><span>Escalated to staff</span><span style="color:var(--amber)">1</span></div>
+              <div style="display:flex;justify-content:space-between"><span>Avg. call duration</span><span>1m 42s</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──── SCHEDULE ──── -->
+    <div class="tab" id="tab-schedule">
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--blue)"></span>Clinic Hours · 診療時間</div></div>
+        <table class="sched-tbl">
+          <thead>
+            <tr>
+              <th style="text-align:left;color:var(--text2)">診療</th>
+              <th>月 Mon</th><th>火 Tue</th><th>水 Wed</th><th>木 Thu</th><th>金 Fri</th><th style="color:var(--red)">土 Sat</th><th style="color:var(--red)">日 Sun</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:left;color:var(--text2)">Morning 09:00–13:00</td>
+              <td><span class="sclosed">—</span></td><td><span class="sopen">●</span></td><td><span class="sopen">●</span></td>
+              <td><span class="sopen">●</span></td><td><span class="sopen">●</span></td><td><span class="spartial">△</span></td><td><span class="sclosed">—</span></td>
+            </tr>
+            <tr>
+              <td style="text-align:left;color:var(--text2)">Afternoon 14:00–18:00</td>
+              <td><span class="sclosed">—</span></td><td><span class="sopen">●</span></td><td><span class="spartial">△</span></td>
+              <td><span class="sopen">●</span></td><td><span class="sopen">●</span></td><td><span class="sclosed">—</span></td><td><span class="sclosed">—</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="display:flex;gap:16px;margin-top:10px;font-size:11px;color:var(--text3)">
+          <span><span style="color:var(--teal)">●</span> Open</span>
+          <span><span style="color:var(--amber)">△</span> 自由診療のみ (Private only)</span>
+          <span><span style="color:var(--border2)">—</span> Closed</span>
+          <span style="margin-left:auto">Closed: 月 Mon · 日 Sun · 祝日 Public holidays</span>
+        </div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--teal)"></span>AI Coverage vs Clinic Hours</div></div>
+          <div style="font-size:12px;line-height:2;color:var(--text2)">
+            <div style="display:flex;justify-content:space-between"><span>Clinic open</span><span style="color:var(--teal)">Tue–Fri + Sat AM</span></div>
+            <div style="display:flex;justify-content:space-between"><span>AI Phone (Vapi)</span><span style="color:var(--green)">24 / 7 · 365</span></div>
+            <div style="display:flex;justify-content:space-between"><span>LINE automation</span><span style="color:var(--green)">24 / 7 · 365</span></div>
+            <div style="display:flex;justify-content:space-between"><span>After-hours bookings</span><span style="color:var(--green)">✓ Auto-queued</span></div>
+            <div style="display:flex;justify-content:space-between"><span>Emergency escalation</span><span style="color:var(--amber)">SMS + LINE alert</span></div>
+            <div style="display:flex;justify-content:space-between"><span>Google Calendar sync</span><span style="color:var(--green)">✓ Real-time</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--amber)"></span>Next 7 Days Availability</div></div>
+          <div class="avail-item"><span>Thu Jun 5</span><span style="color:var(--green)">4 slots open</span></div>
+          <div class="avail-item"><span>Fri Jun 6</span><span style="color:var(--green)">6 slots open</span></div>
+          <div class="avail-item"><span>Sat Jun 7</span><span style="color:var(--amber)">AM only · 2 left</span></div>
+          <div class="avail-item"><span>Mon Jun 9</span><span style="color:var(--border2)">Closed</span></div>
+          <div class="avail-item"><span>Tue Jun 10</span><span style="color:var(--red)">Fully booked</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──── REVIEWS ──── -->
+    <div class="tab" id="tab-reviews">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-lbl">Overall Rating</div><div class="stat-val" style="color:var(--amber)">4.8</div><div class="stars" style="font-size:13px">★★★★★</div></div>
+        <div class="stat-card"><div class="stat-lbl">Total Reviews</div><div class="stat-val">247</div><div class="stat-sub">All channels</div></div>
+        <div class="stat-card"><div class="stat-lbl">Response Rate</div><div class="stat-val" style="color:var(--green)">98%</div><div class="stat-sub">AI-drafted replies</div></div>
+        <div class="stat-card"><div class="stat-lbl">Sentiment</div><div class="stat-val" style="color:var(--green)">+94%</div><div class="stat-sub">Positive</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--amber)"></span>Recent Patient Reviews</div><span class="card-action">Draft replies →</span></div>
+        <div class="review">
+          <div class="review-hdr"><div class="rav" style="background:#1a2e1a;color:var(--green)">TK</div><div><div style="font-size:12px;font-weight:500">田中 健一</div><div class="stars" style="font-size:12px">★★★★★</div></div><span class="review-date">Jun 1, 2026</span></div>
+          <div class="review-txt">予約の電話でAIが素早く対応してくれました。診察もとても丁寧で、先生の説明が分かりやすかったです。また来院します。</div>
+          <div class="review-foot"><span class="tag t-ja">ja</span> AI reply sent · 2h after posting</div>
+        </div>
+        <div class="review">
+          <div class="review-hdr"><div class="rav" style="background:#0c1f3d;color:var(--blue)">SW</div><div><div style="font-size:12px;font-weight:500">Sarah Williams</div><div class="stars" style="font-size:12px">★★★★★</div></div><span class="review-date">May 28, 2026</span></div>
+          <div class="review-txt">As an expat I was worried about the language barrier, but the AI assistant handled my call in perfect English and sent a LINE message with directions. The doctor spoke English too. Highly recommend.</div>
+          <div class="review-foot"><span class="tag t-en">en</span> AI reply sent · same day</div>
+        </div>
+        <div class="review">
+          <div class="review-hdr"><div class="rav" style="background:#0d2d1a;color:var(--green)">LW</div><div><div style="font-size:12px;font-weight:500">李 偉</div><div class="stars" style="font-size:12px">★★★★☆</div></div><span class="review-date">May 22, 2026</span></div>
+          <div class="review-txt">AI电话助手能用中文交流，预约非常方便。等待时间稍长，但医生非常专业。下次还会来。</div>
+          <div class="review-foot"><span class="tag t-zh">zh</span> AI reply sent · 4h after posting</div>
+        </div>
+        <div class="review">
+          <div class="review-hdr"><div class="rav" style="background:#1e1020;color:var(--pink)">KJ</div><div><div style="font-size:12px;font-weight:500">김지수 (Kim Jisoo)</div><div class="stars" style="font-size:12px">★★★★★</div></div><span class="review-date">May 18, 2026</span></div>
+          <div class="review-txt">한국어로도 예약할 수 있어서 너무 편했어요. 의사 선생님도 친절하고 진료도 꼼꼼하게 해주셨습니다.</div>
+          <div class="review-foot"><span class="tag t-ko">ko</span> AI reply sent · 1h after posting</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──── INFO ──── -->
+    <div class="tab" id="tab-info">
+      <div class="g2">
+        <div class="card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--teal)"></span>Clinic Information</div></div>
+          <table class="info-table">
+            <tr><td>Name (EN)</td><td>Toranomon Clinic</td></tr>
+            <tr><td>Name (JA)</td><td>虎ノ門クリニック</td></tr>
+            <tr><td>Phone</td><td style="color:var(--teal)">03-6826-231x</td></tr>
+            <tr><td>Website</td><td style="color:var(--blue)">toranomon.clinic</td></tr>
+            <tr><td>Area</td><td>Toranomon, Minato-ku, Tokyo</td></tr>
+            <tr><td>Access</td><td>Toranomon Stn (Ginza Line) · 2 min</td></tr>
+            <tr><td>Consultation type</td><td>自由診療のみ · Private only</td></tr>
+            <tr><td>Billing</td><td>Stripe · 振込 (Bank transfer)</td></tr>
+            <tr><td>Languages</td><td>Japanese · English · 中文 · 한국어</td></tr>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--blue)"></span>Japan AI Solutions — Tech Stack</div></div>
+          <table class="info-table">
+            <tr><td>Voice AI</td><td>Vapi + Azure NanamiNeural</td></tr>
+            <tr><td>Speech-to-text</td><td>Deepgram Nova 3 (ja)</td></tr>
+            <tr><td>Translation</td><td>DeepL API</td></tr>
+            <tr><td>Messaging</td><td>LINE / Liny</td></tr>
+            <tr><td>CRM</td><td>GoHighLevel</td></tr>
+            <tr><td>Automation</td><td>Make.com</td></tr>
+            <tr><td>Telephony</td><td>Twilio Japan</td></tr>
+            <tr><td>Calendar</td><td>Google Calendar API</td></tr>
+            <tr><td>Chatbot</td><td>Voiceflow</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title"><span class="dot" style="background:var(--amber)"></span>APPI Compliance Notice</div></div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.7">
+          All patient data is handled in accordance with Japan's Act on the Protection of Personal Information (個人情報保護法 / APPI). Voice call data is processed transiently and not retained beyond the session. Patient records are stored on Japan-region servers only. AI assistants do not retain personal health information between sessions. Automated consent disclosure is provided at first contact on every channel.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+const TITLES = {dashboard:'Dashboard',booking:'Booking & Appointments',caller:'Caller Recognition',concierge:'AI Concierge (24/7)',schedule:'Clinic Schedule',reviews:'Patient Reviews',info:'Clinic Info'};
+const SUBS = {dashboard:'Live overview · Toranomon Clinic · 4 June 2026',booking:'Pending & confirmed appointments',caller:'Live call · 田中 健一 matched',concierge:'Multilingual AI assistant — JA / EN / ZH / KO',schedule:'Clinic hours & AI coverage map',reviews:'Patient feedback across all channels',info:'Clinic details & Japan AI Solutions stack'};
+
+function showTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    if(n.getAttribute('onclick')==="showTab('"+id+"')") n.classList.add('active');
+  });
+  document.getElementById('page-title').textContent=TITLES[id]||id;
+  document.getElementById('page-sub').textContent=SUBS[id]||'';
+}
+
+// Today's appts
+const todayAppts=[
+  {init:'TK',bg:'#1a2e3a',tc:'var(--teal)',name:'田中 健一 (Tanaka Kenichi)',meta:'内科 · General medicine',badge:'b-ret',blbl:'Returning',time:'09:00',status:'In clinic',sc:'var(--green)'},
+  {init:'SW',bg:'#1a2a1a',tc:'var(--green)',name:'Sarah Williams',meta:'自由診療 · Private consult',badge:'b-priv',blbl:'Private',time:'10:30',status:'Confirmed',sc:'var(--text3)'},
+  {init:'LW',bg:'#2a1a2e',tc:'var(--purple)',name:'李 偉 (Li Wei)',meta:'循環器内科 · Cardiology',badge:'b-new',blbl:'New',time:'11:00',status:'Confirmed',sc:'var(--text3)'},
+  {init:'YM',bg:'#2d1f00',tc:'var(--amber)',name:'山本 由美 (Yamamoto Yumi)',meta:'自由診療 · Health check-up',badge:'b-priv',blbl:'Private',time:'14:00',status:'Confirmed',sc:'var(--text3)'},
+  {init:'KJ',bg:'#1e1020',tc:'var(--pink)',name:'김지수 (Kim Jisoo)',meta:'神経内科 · Neurology',badge:'b-wait',blbl:'Waitlist',time:'15:30',status:'Pending',sc:'var(--amber)'},
+];
+const ta=document.getElementById('today-appts');
+todayAppts.forEach(a=>{
+  ta.innerHTML+=`<div class="appt">
+    <div class="av" style="background:${a.bg};color:${a.tc}">${a.init}</div>
+    <div class="appt-info">
+      <div class="appt-name">${a.name}</div>
+      <div class="appt-meta">${a.meta} <span class="badge ${a.badge}">${a.blbl}</span></div>
+    </div>
+    <div class="appt-time">${a.time}<br><span style="font-size:10px;color:${a.sc}">${a.status}</span></div>
+  </div>`;
+});
+
+// Booking list
+const bookings=[
+  {init:'ST',bg:'#1a2e3a',tc:'var(--teal)',name:'鈴木 太郎 🇯🇵',meta:'内科 · Phone AI',badge:'b-new',blbl:'New',time:'Jun 5 · 10:00'},
+  {init:'EC',bg:'#1a2a1a',tc:'var(--green)',name:'Emily Chen 🇬🇧',meta:'自由診療 · LINE',badge:'b-priv',blbl:'Private',time:'Jun 5 · 14:30'},
+  {init:'PM',bg:'#2a1a2e',tc:'var(--purple)',name:'박민준 (Park Minjun) 🇰🇷',meta:'神経内科 · Web form',badge:'b-new',blbl:'New',time:'Jun 6 · 09:30'},
+  {init:'NY',bg:'#2d1f00',tc:'var(--amber)',name:'中村 優子 🇯🇵',meta:'循環器内科 · Phone AI',badge:'b-ret',blbl:'Returning',time:'Jun 6 · 11:00'},
+  {init:'MR',bg:'#1e1020',tc:'var(--pink)',name:'Marco Rossi 🇮🇹',meta:'自由診療 · Web form',badge:'b-priv',blbl:'Private',time:'Jun 7 · 10:00'},
+  {init:'WF',bg:'#0d2d1a',tc:'var(--green)',name:'王 芳 (Wang Fang) 🇨🇳',meta:'内科 · LINE',badge:'b-new',blbl:'New',time:'Jun 10 · 09:00'},
+  {init:'IM',bg:'#1a1a3a',tc:'var(--purple)',name:'伊藤 誠 🇯🇵',meta:'自由診療 · Phone AI',badge:'b-wait',blbl:'Waitlist',time:'Jun 10 · 15:00'},
+];
+const bl=document.getElementById('booking-list');
+bookings.forEach((b,i)=>{
+  bl.innerHTML+=`<div class="appt" id="booking-row-${i}">
+    <div class="av" style="background:${b.bg};color:${b.tc}">${b.init}</div>
+    <div class="appt-info">
+      <div class="appt-name">${b.name}</div>
+      <div class="appt-meta">${b.meta} <span class="badge ${b.badge}">${b.blbl}</span></div>
+    </div>
+    <div class="appt-time">${b.time}<br>
+      <button class="btn primary sm" style="margin-top:3px" onclick="confirmOne(${i},this)">Confirm</button>
+    </div>
+  </div>`;
+});
+
+function confirmOne(i,btn){btn.textContent='✓ Done';btn.style.background='var(--green)';btn.style.borderColor='var(--green)';btn.disabled=true;}
+function confirmAll(){document.querySelectorAll('#booking-list .btn').forEach(b=>{b.textContent='✓ Done';b.style.background='var(--green)';b.style.borderColor='var(--green)';b.disabled=true;});}
+
+// Chat
+const RESPONSES={
+  'opening hours':"Our clinic is open Tuesday–Friday (morning & afternoon) and Saturday mornings only.\n\n診療時間：火〜金 09:00–18:00、土 09:00–13:00。\nClosed: Monday, Sunday, and all public holidays.",
+  'appointment':"I'll help you book an appointment. Please share your preferred date and consultation type.\n\nご希望の日時と診察内容をお知らせください。電話・LINEでもご予約いただけます。",
+  '予約':"ご予約を承ります。ご希望の日時と診察の内容をお聞かせください。\nお電話（03-6826-231x）またはLINEからもご予約いただけます。",
+  '我想预约':"您好！欢迎预约虎之门诊所。请告知您希望的就诊日期、时间及就诊原因，我们将为您安排最合适的时间段。",
+  'insurance':"Toranomon Clinic operates on a private-pay basis (自由診療のみ). We accept Stripe card payments and Japanese bank transfer (振込). Some international travel insurance plans may be reimbursable — please consult your insurer.",
+  'アクセス':"虎ノ門駅（東京メトロ銀座線）より徒歩約2分です。\nToranomon Station (Ginza Line), approximately 2 minutes walk.\nFor a map, please visit toranomon.clinic",
+  'directions':"We are in Toranomon, Minato-ku. Nearest station: Toranomon (Tokyo Metro Ginza Line), 2-minute walk. Full map at toranomon.clinic",
+  'hours':"Tuesday–Friday: 09:00–18:00 (morning + afternoon)\nSaturday: 09:00–13:00 (morning only, private consultations)\nClosed: Monday, Sunday, public holidays.",
+};
+
+function sendChat(){
+  const inp=document.getElementById('chat-input');
+  const msg=inp.value.trim();if(!msg)return;
+  const area=document.getElementById('chat-area');
+  area.innerHTML+=`<div class="cmsg user">${msg}</div>`;
+  inp.value='';
+  area.innerHTML+=`<div class="typing"><span></span><span></span><span></span></div>`;
+  area.scrollTop=area.scrollHeight;
+  setTimeout(()=>{
+    const t=area.querySelector('.typing');if(t)t.remove();
+    let reply="Thank you for your enquiry. Our AI concierge is available 24/7. For urgent matters please call 03-6826-231x, or LINE us directly. Type 'appointment' to book, or 'hours' for opening times.";
+    const lower=msg.toLowerCase();
+    for(const k in RESPONSES){if(lower.includes(k)){reply=RESPONSES[k];break;}}
+    area.innerHTML+=`<div class="cmsg ai"><div class="cmsg-lang">AI Concierge · Auto-detected language</div>${reply.replace(/\n/g,'<br>')}</div>`;
+    area.scrollTop=area.scrollHeight;
+  },1300);
+}
+
+function quickMsg(t){document.getElementById('chat-input').value=t;sendChat();}
+</script>
+</body>
+</html>
